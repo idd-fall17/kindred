@@ -41,6 +41,7 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.ParcelUuid;
+import android.renderscript.Sampler;
 import android.util.Log;
 
 import android.app.Activity;
@@ -93,7 +94,7 @@ public class GattServerActivity extends Activity {
 
         /* handles gpi input/output */
         //PeripheralManagerService service = new PeripheralManagerService();
-        myBoardApp.setup();
+        //myBoardApp.setup();
     }
 
 
@@ -258,19 +259,29 @@ public class GattServerActivity extends Activity {
          **/
         @Override
         public void onCharacteristicWriteRequest(BluetoothDevice device, int requestId, BluetoothGattCharacteristic characteristic, boolean preparedWrite, boolean responseNeeded, int offset, byte[] value) {
-            if (CustomProfile.WRITE_COUNTER.equals(characteristic.getUuid())) {
+
+            boolean isValidRequest = true;
+
+            if (CustomProfile.WRITE_RESET.equals(characteristic.getUuid())) {
                 Log.i(TAG, "Write Output Characteristic");
+                CustomProfile.resetOutputValue();
+            } else if (CustomProfile.WRITE_BUTTON_MSG.equals(characteristic.getUuid())) {
+                Log.i(TAG, "Write Button MSG Characteristic");
+                myBoardApp.setButtonVal(0, value.toString());
+            } else if (CustomProfile.WRITE_DEVICE_NAME.equals(characteristic.getUuid())) {
+                Log.i(TAG, "Write Device Name Characteristic");
+                myBoardApp.setDeviceName(value.toString());
+                CustomProfile.resetOutputValue();
+            } else {
+                isValidRequest = false;
+            }
 
-                CustomProfile.setOutputValue(value);
-
-                if (responseNeeded) {
-                    mBluetoothGattServer.sendResponse(device,
-                            requestId,
-                            BluetoothGatt.GATT_SUCCESS,
-                            0,
-                            value);
-                }
-
+            if (responseNeeded && isValidRequest) {
+                mBluetoothGattServer.sendResponse(device,
+                        requestId,
+                        BluetoothGatt.GATT_SUCCESS,
+                        0,
+                        value);
             }
 
         }
@@ -282,7 +293,7 @@ public class GattServerActivity extends Activity {
         public void onCharacteristicReadRequest(BluetoothDevice device, int requestId, int offset,
                                                 BluetoothGattCharacteristic characteristic) {
 
-            if (CustomProfile.READ_COUNTER.equals(characteristic.getUuid())) {
+            if (CustomProfile.READ_MSG.equals(characteristic.getUuid())) {
                 Log.i(TAG, "Read Input Characteristic");
                 mBluetoothGattServer.sendResponse(device,
                         requestId,
