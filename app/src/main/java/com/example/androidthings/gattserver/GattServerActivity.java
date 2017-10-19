@@ -53,6 +53,8 @@ import android.widget.EditText;
 
 import com.google.android.things.pio.PeripheralManagerService;
 
+import static java.sql.DriverManager.println;
+
 public class GattServerActivity extends Activity {
     private static final String TAG = GattServerActivity.class.getSimpleName();
 
@@ -61,7 +63,7 @@ public class GattServerActivity extends Activity {
     private BluetoothGattServer mBluetoothGattServer;
     private BluetoothLeAdvertiser mBluetoothLeAdvertiser;
 
-    private CustomProfile myBoardApp = new CustomProfile();
+    private TestApp myBoardApp = new TestApp();
 
 
     @Override
@@ -77,8 +79,9 @@ public class GattServerActivity extends Activity {
 
         // IDD: SET A CUSTOM DEVICE NAME - is iMX7 by default
         // @see https://stackoverflow.com/questions/8377558/change-the-android-bluetooth-device-name
-        // No more than 8 characters or advertising will fail (" LE Advertise Failed: 1")
-        bluetoothAdapter.setName("IDDdemo");
+        // No more than 8 characters or advertising will fail (" LE Advertise Failed: 1") TODO: why????
+
+        bluetoothAdapter.setName(CustomProfile.getDeviceName());
 
         // Register for system Bluetooth events
         IntentFilter filter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
@@ -94,7 +97,7 @@ public class GattServerActivity extends Activity {
 
         /* handles gpi input/output */
         //PeripheralManagerService service = new PeripheralManagerService();
-        //myBoardApp.setup();
+        myBoardApp.setup();
     }
 
 
@@ -261,17 +264,22 @@ public class GattServerActivity extends Activity {
         public void onCharacteristicWriteRequest(BluetoothDevice device, int requestId, BluetoothGattCharacteristic characteristic, boolean preparedWrite, boolean responseNeeded, int offset, byte[] value) {
 
             boolean isValidRequest = true;
+            String msg = new String(value);
+            Log.d(TAG, "onCharacteristicWriteRequest: msg received " + msg);
 
+            // TODO: more elegant code?
             if (CustomProfile.WRITE_RESET.equals(characteristic.getUuid())) {
-                Log.i(TAG, "Write Output Characteristic");
-                CustomProfile.resetOutputValue();
+                Log.i(TAG, "Write Reset Characteristic");
+                CustomProfile.acknowledgeAndRest();
             } else if (CustomProfile.WRITE_BUTTON_MSG.equals(characteristic.getUuid())) {
-                Log.i(TAG, "Write Button MSG Characteristic");
-                myBoardApp.setButtonVal(0, value.toString());
+                Log.i(TAG, "Write Button MSG Characteristic: " + msg);
+                CustomProfile.setButtonVal(0, msg);
             } else if (CustomProfile.WRITE_DEVICE_NAME.equals(characteristic.getUuid())) {
                 Log.i(TAG, "Write Device Name Characteristic");
-                myBoardApp.setDeviceName(value.toString());
-                CustomProfile.resetOutputValue();
+                CustomProfile.setDeviceName(msg);
+            } else if (CustomProfile.WRITE_STUDENT_NAME.equals(characteristic.getUuid())){
+                Log.i(TAG, "Write Student Name Characteristic");
+                CustomProfile.setStudentName(msg);
             } else {
                 isValidRequest = false;
             }

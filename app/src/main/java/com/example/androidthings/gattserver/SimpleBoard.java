@@ -47,7 +47,7 @@ public abstract class SimpleBoard {
         return Math.round(SystemClock.elapsedRealtimeNanos()/1000.f);
     }
 
-    void pinMode(Gpio pin, int mode) {
+    static void pinMode(Gpio pin, int mode) {
         try {
             pin.setDirection(mode);
         } catch (IOException e) {
@@ -55,7 +55,7 @@ public abstract class SimpleBoard {
         }
 
     }
-    void digitalWrite(Gpio pin, boolean value) {
+    static void digitalWrite(Gpio pin, boolean value) {
         if(pin!=null) {
             try {
                 pin.setValue(value);

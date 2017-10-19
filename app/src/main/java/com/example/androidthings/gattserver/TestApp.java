@@ -9,17 +9,16 @@ import com.example.androidthings.gattserver.CustomProfile;
 
 public class TestApp extends SimplePicoPro {
 
-    CustomProfile customProfile;
-
     @Override
     public void setup() {
-
-        customProfile = new CustomProfile();
-
         //set two GPIOs to input
         pinMode(GPIO_128,Gpio.DIRECTION_IN);
         setEdgeTrigger(GPIO_128,Gpio.EDGE_BOTH);
-        customProfile.buttonNumGpioMap.put(0, GPIO_128);
+        CustomProfile.buttonNumGpioMap.put(0, GPIO_128);
+
+        // this is for led
+        pinMode(GPIO_39,Gpio.DIRECTION_IN);
+        setEdgeTrigger(GPIO_39,Gpio.EDGE_BOTH);
     }
 
     @Override
@@ -34,7 +33,7 @@ public class TestApp extends SimplePicoPro {
         // when 128 goes from LOW to HIGH
         // this is on button button release for pull-up resistors
         if(pin==GPIO_128 && value==HIGH) {
-            customProfile.setCurrentMsg(pin);
+            CustomProfile.setCurrentMsg(pin);
         }
     }
 
