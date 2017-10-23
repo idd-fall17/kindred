@@ -271,15 +271,6 @@ public class GattServerActivity extends Activity {
             if (CustomProfile.WRITE_RESET.equals(characteristic.getUuid())) {
                 Log.i(TAG, "Write Reset Characteristic");
                 CustomProfile.acknowledgeAndRest();
-            } else if (CustomProfile.WRITE_BUTTON_MSG.equals(characteristic.getUuid())) {
-                Log.i(TAG, "Write Button MSG Characteristic: " + msg);
-                CustomProfile.setButtonVal(0, msg);
-            } else if (CustomProfile.WRITE_DEVICE_NAME.equals(characteristic.getUuid())) {
-                Log.i(TAG, "Write Device Name Characteristic");
-                CustomProfile.setDeviceName(msg);
-            } else if (CustomProfile.WRITE_STUDENT_NAME.equals(characteristic.getUuid())){
-                Log.i(TAG, "Write Student Name Characteristic");
-                CustomProfile.setStudentName(msg);
             } else {
                 isValidRequest = false;
             }

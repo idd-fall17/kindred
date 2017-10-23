@@ -14,7 +14,6 @@ public class TestApp extends SimplePicoPro {
         //set two GPIOs to input
         pinMode(GPIO_128,Gpio.DIRECTION_IN);
         setEdgeTrigger(GPIO_128,Gpio.EDGE_BOTH);
-        CustomProfile.buttonNumGpioMap.put(0, GPIO_128);
 
         // this is for led
         pinMode(GPIO_39,Gpio.DIRECTION_IN);
