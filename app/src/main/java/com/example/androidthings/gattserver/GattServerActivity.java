@@ -41,19 +41,7 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.ParcelUuid;
-import android.renderscript.Sampler;
 import android.util.Log;
-
-import android.app.Activity;
-import android.os.Bundle;
-import android.os.Handler;
-import android.util.DisplayMetrics;
-import android.util.Log;
-import android.widget.EditText;
-
-import com.google.android.things.pio.PeripheralManagerService;
-
-import static java.sql.DriverManager.println;
 
 public class GattServerActivity extends Activity {
     private static final String TAG = GattServerActivity.class.getSimpleName();
@@ -270,7 +258,7 @@ public class GattServerActivity extends Activity {
             // TODO: more elegant code?
             if (CustomProfile.WRITE_RESET.equals(characteristic.getUuid())) {
                 Log.i(TAG, "Write Reset Characteristic");
-                CustomProfile.acknowledgeAndRest();
+                CustomProfile.acknowledgeAndReset();
             } else {
                 isValidRequest = false;
             }

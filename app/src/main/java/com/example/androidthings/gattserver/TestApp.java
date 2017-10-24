@@ -11,13 +11,18 @@ public class TestApp extends SimplePicoPro {
 
     @Override
     public void setup() {
-        //set two GPIOs to input
+        //GPIO 128 for input
         pinMode(GPIO_128,Gpio.DIRECTION_IN);
         setEdgeTrigger(GPIO_128,Gpio.EDGE_BOTH);
 
-        // this is for led
-        pinMode(GPIO_39,Gpio.DIRECTION_IN);
-        setEdgeTrigger(GPIO_39,Gpio.EDGE_BOTH);
+        // GPIO 39 for Green LED
+        pinMode(GPIO_39,Gpio.DIRECTION_OUT_INITIALLY_LOW);
+
+        // GPIO 37 for Orange LED
+        pinMode(GPIO_37,Gpio.DIRECTION_OUT_INITIALLY_LOW);
+
+        // GPIO 35 for Red LED
+        pinMode(GPIO_35,Gpio.DIRECTION_OUT_INITIALLY_LOW);
     }
 
     @Override
@@ -29,11 +34,34 @@ public class TestApp extends SimplePicoPro {
     void digitalEdgeEvent(Gpio pin, boolean value) {
         println("digitalEdgeEvent"+pin+", "+value);
 
-        // when 128 goes from LOW to HIGH
-        // this is on button button release for pull-up resistors
+        //When GPIO goes form low to high to low, button is pressed
         if(pin==GPIO_128 && value==HIGH) {
             CustomProfile.setCurrentMsg(pin);
+            turnOffAllLED();
+            turnOnRedLED();
         }
     }
+
+    void turnOffAllLED () {
+        SimplePicoPro.digitalWrite(GPIO_35, false);
+        SimplePicoPro.digitalWrite(GPIO_37, false);
+        SimplePicoPro.digitalWrite(GPIO_39, false);
+    }
+
+    void turnOnGreenLED () {
+        SimplePicoPro.pinMode(GPIO_39, 1);
+    }
+
+    void turnOnOrangeLED () {
+        SimplePicoPro.pinMode(GPIO_37, 1);
+    }
+
+    void turnOnRedLED () {
+        SimplePicoPro.digitalWrite(GPIO_35, true);
+    }
+
+
+
+
 
 }

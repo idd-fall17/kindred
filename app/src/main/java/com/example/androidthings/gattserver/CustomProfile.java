@@ -9,11 +9,13 @@ import java.util.HashMap;
 import java.util.UUID;
 
 import static com.example.androidthings.gattserver.SimplePicoPro.GPIO_128;
+import static com.example.androidthings.gattserver.SimplePicoPro.GPIO_35;
 import static com.example.androidthings.gattserver.SimplePicoPro.GPIO_39;
 
 /**
  * A custom profile to hold Characteristics of your choice
  * Created by bjoern on 10/11/17.
+ * Edited by Kate and Kian
  */
 
 public class CustomProfile {
@@ -27,8 +29,10 @@ public class CustomProfile {
 
     public static HashMap<Gpio, String> gpioMessageMap = new HashMap<Gpio, String>();
 
-    private static String message = "default";
-    private static String deviceName = "kindred";
+    private static String MESSAGE_DEFAULT = "nil";
+    private static String MESSAGE_RESTROOM = "restroom";
+    private static String message = MESSAGE_DEFAULT;
+    private static String deviceName = "Kindred";
 
     public static HashMap<Gpio, String> getGpioMessageMap() {
         gpioMessageMap.put(GPIO_128, "128 msg");
@@ -66,23 +70,28 @@ public class CustomProfile {
     }
 
     // this is the only value that the device will be broadcasting
-    // TODO: only broadcast on button push
     public static byte[] getInputValue() {
         return message.getBytes();
     }
 
     // sent upon receipt of initial message
-    public static void acknowledgeAndRest () {
-        // TODO: do something like turn on led
-        // TODO: we should only broadcast when there is a message to broadcast
-        SimplePicoPro.pinMode(GPIO_39, 1);
-        message = "default";
+    public static void acknowledgeAndReset() {
+
+        //Turns off Red LED
+        SimplePicoPro.digitalWrite(GPIO_35, false);
+
+        //Turns on Green LED
+        SimplePicoPro.digitalWrite(GPIO_39, true);
+
+        message = MESSAGE_DEFAULT;
     }
 
     // connected to the gpio pins
     public static void setCurrentMsg(Gpio button) {
         HashMap<Gpio, String> map = getGpioMessageMap();
-        message = map.get(button);
+        if (button == GPIO_128) {
+            message = MESSAGE_RESTROOM;
+        }
     }
 
 }
