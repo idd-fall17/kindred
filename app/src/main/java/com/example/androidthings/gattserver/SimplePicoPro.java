@@ -84,8 +84,6 @@ public abstract class SimplePicoPro extends SimpleBoard {
             GPIO_39.setEdgeTriggerType(Gpio.EDGE_NONE);
             GPIO_39.registerGpioCallback(gpioCallback);
 
-
-
             PWM1 = service.openPwm("PWM1");
             PWM2 = service.openPwm("PWM2");
 
